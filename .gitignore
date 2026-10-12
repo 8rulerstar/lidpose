@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+calib.npz
+measure.csv
+models/
+head.csv
+head_marks.npz
+calib.log
+calib.pid
+head_run*.csv
+head_marks*.npz
+head_marks*.npy
+NOTES.md
