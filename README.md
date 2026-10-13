@@ -33,6 +33,10 @@ it continuously, including while the lid is moving. If you wear AirPods, their h
 motion sensors measure pitch against gravity and are likely better; lidtilt needs no
 extra hardware.
 
+[PostureGuard](https://github.com/caic99/PostureGuard), published earlier, combines the
+same lid sensor with Apple Vision's face pitch in a menu bar app that warns when you
+slouch.
+
 ## What was measured
 
 Consistency checks: one person, one MacBook Pro (Mac16,8), one room. Each row is a
@@ -52,7 +56,9 @@ from the recordings. Degrees.
   leaves up to about 4.5 degrees over a 50 degree lid change. After a large lid change,
   re-zero by restarting `head.py`.
 - MediaPipe's own head pitch followed only 0.32 to 0.45 per lid degree over runs 1 to 3,
-  so lidtilt solves the pose itself.
+  and Apple Vision's face pitch (`VNDetectFaceRectanglesRequest`) 0.22 and 0.23 in two
+  runs (lid 97 to 131, macOS 27), while the solved pitch followed 1.17 and 1.05 in the same
+  frames. So lidtilt solves the pose itself.
 - These are consistency checks, not accuracy: nothing was compared against a goniometer
   or an IMU. The recordings hold face landmarks, so they are not published.
 
@@ -150,6 +156,7 @@ latter into a GIF with `uv run python demo/make_gif.py head_marks.npz out.gif`.
 | `calibrate.py` | Webcam intrinsics |
 | `measure.py` | Optional: camera tilt vs lid angle from the board held still (`measure.py [seconds]`, default 40, writes `measure.csv`); it prints the `LIDTILT_SLOPE` value to use (default 1) |
 | `analysis/table.py` | Recomputes the table above; needs the recordings, which are not published |
+| `analysis/vision_slope.py` | Optional: Vision face pitch vs solved pitch against the lid (needs `pyobjc-framework-Vision`) |
 | `head.py` | Head pitch, with and without the lid tilt |
 | `demo/make_gif.py` | Demo GIF from a recording |
 

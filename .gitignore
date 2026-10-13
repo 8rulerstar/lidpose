@@ -11,3 +11,4 @@ head_run*.csv
 head_marks*.npz
 head_marks*.npy
 NOTES.md
+vision_run*.npy
