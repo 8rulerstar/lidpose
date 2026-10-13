@@ -3,7 +3,8 @@
 The webcam sits in the lid, so opening the lid tilts the camera about one degree per
 lid degree (the face's direction from the camera: about 0.99 per degree while the lid
 swung in runs 2 to 4; the solved
-head pitch: 0.97 to 1.09 per degree in three runs by one person, see analysis/table.py) and a still head
+head pitch: 0.97 to 1.17 per degree in five runs by one person, see analysis/table.py
+and analysis/vision_slope.py) and a still head
 appears to pitch by the same amount. Head pitch is solved from all face landmarks with the calibrated camera;
 adding back the lid change since the start gives pitch relative to the desk.
 Both are relative: zero is whatever posture you hold when the script starts, not an
@@ -71,7 +72,7 @@ class PnPPitch:
 
     MediaPipe's own pitch follows only part of a camera tilt (0.32 to 0.45 per degree
     over runs 1 to 3). Solving the pose with the real intrinsics against the user's own face
-    shape follows it at 0.97 to 1.09 per degree, close enough to add the lid angle back one
+    shape follows it at 0.97 to 1.17 per degree, close enough to add the lid angle back one
     to one; a few degrees can remain.
     """
 
@@ -122,7 +123,7 @@ def head_pitch(detector, frame_bgr):
 
 def corrected(pitch, lid_angle, lid_start, distance_ratio=1.0):
     """Pitch relative to the desk, zero at the starting posture: add back how far the lid
-    has tilted the camera since the start (SLOPE per lid degree; measured 0.97 to 1.09), and
+    has tilted the camera since the start (SLOPE per lid degree; measured 0.97 to 1.17), and
     remove the reading's drift with distance to the camera."""
     if not DIST_GAIN:  # skip the log: a flipped pose can give a ratio <= 0
         return pitch + SLOPE * (lid_angle - lid_start)

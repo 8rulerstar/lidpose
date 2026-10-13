@@ -1,14 +1,15 @@
-"""How much of a lid tilt does Apple Vision's face pitch follow, next to lidtilt's PnP pitch?
+"""How much of a lid tilt does Apple Vision's face pitch follow, next to lidtilt's solved pitch?
 
-PostureGuard (caic99/PostureGuard) adds the lid angle one to one to Vision's face pitch
-(VNDetectFaceRectanglesRequest). MediaPipe's own pitch followed only 0.32 to 0.45 per lid
-degree here; this checks Vision the same way.
+Adding the lid angle back one to one only works if the pitch follows the camera tilt one
+to one. This records Vision's face pitch (VNDetectFaceRectanglesRequest) and the solved
+pitch from head.py on the same camera frames and fits each against the lid angle, using
+only frames where both found a face.
 
-Hold your head still, look at the screen, and swing the lid slowly between about 100 and
-130 degrees a few times. q to stop.
+Run from the repository root after calibrate.py. Hold your head still, look at the
+screen, and swing the lid slowly between about 100 and 130 degrees a few times. q to stop.
 
-    .venv/bin/python analysis/vision_slope.py            # record to vision_runN.npy (next free N), then fit
-    .venv/bin/python analysis/vision_slope.py vision_run1.npy   # fit an existing recording
+    uv run --extra vision python analysis/vision_slope.py                  # record to vision_runN.npy (next free N), then fit
+    uv run --extra vision python analysis/vision_slope.py vision_run1.npy  # fit an existing recording
 """
 
 import sys
@@ -43,6 +44,8 @@ def record(path):
     from board import CAMERA, CAMERA_HELP
     from lid import Lid
 
+    if head.CALIB is None:
+        sys.exit("calib.npz not found: run calibrate.py first, from the repository root")
     lid, detector, cap = Lid(), head.landmarker(), cv2.VideoCapture(CAMERA)
     if not cap.isOpened():
         sys.exit(f"camera {CAMERA} unavailable: {CAMERA_HELP}")
@@ -54,6 +57,8 @@ def record(path):
             ok, frame = cap.read()
             if not ok:
                 continue
+            if frame.shape[1::-1] != tuple(head.CALIB["size"]):
+                sys.exit("the camera resolution differs from calib.npz: recalibrate with this camera")
             try:
                 angle = lid.angle()
             except RuntimeError:
@@ -81,14 +86,15 @@ def fit(path):
     print(f"{path}: {len(t)} frames, lid {np.nanmin(lid):.0f} to {np.nanmax(lid):.0f}")
     if np.nanmax(lid) - np.nanmin(lid) < 20:
         sys.exit("the lid moved less than 20 degrees: swing it further and record again")
+    both = ~np.isnan(vision) & ~np.isnan(pnp)  # compare on the same frames
+    print(f"frames with a face: vision {(~np.isnan(vision)).sum()}, solved {(~np.isnan(pnp)).sum()}, both {both.sum()}")
+    if both.sum() < 20:
+        sys.exit("too few frames where both found a face (no calib.npz, or no face in view?)")
     for name, y in (("vision", vision), ("pnp", pnp)):
-        m = ~np.isnan(y)
-        if m.sum() < 20:
-            print(f"{name}: too few frames with a face ({m.sum()})")
-            continue
+        m = both
         slope, icpt = np.polyfit(lid[m], y[m], 1)
         resid = y[m] - (slope * lid[m] + icpt)
-        print(f"{name}: {slope:+.2f} degrees per lid degree ({m.sum()} frames, residual SD {resid.std():.1f}, distinct values {len(np.unique(np.round(y[m], 2)))})")
+        print(f"{name}: {slope:+.2f} degrees per lid degree (residual SD {resid.std():.1f})")
 
 
 if __name__ == "__main__":

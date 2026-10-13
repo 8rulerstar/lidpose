@@ -9,3 +9,6 @@ dependencies = [
     "opencv-contrib-python>=5.0.0.93",
     "pillow>=12.3.0",
 ]
+
+[project.optional-dependencies]
+vision = ["pyobjc-framework-Vision>=12.2"]

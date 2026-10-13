@@ -52,13 +52,16 @@ from the recordings. Degrees.
 - After the lid moved from 123 to 117 degrees, the still head read +5.0 (SD 0.4) instead of
   0 in run 7, 37 to 42 s. Moving the lid also moved the face to 0.89 of its distance;
   by the run 6 distance fit that explains about 3 of the 5 degrees, and the rest is
-  unexplained. The correction uses exactly 1 per lid degree, so a slope of 0.97 to 1.09
-  leaves up to about 4.5 degrees over a 50 degree lid change. After a large lid change,
+  unexplained. The correction uses exactly 1 per lid degree, while the solved pitch moved 0.97 to
+  1.17 per lid degree over five runs (the table and the two Vision runs below), which
+  leaves up to about 8.5 degrees over a 50 degree lid change. After a large lid change,
   re-zero by restarting `head.py`.
-- MediaPipe's own head pitch followed only 0.32 to 0.45 per lid degree over runs 1 to 3,
-  and Apple Vision's face pitch (`VNDetectFaceRectanglesRequest`) 0.22 and 0.23 in two
-  runs (lid 97 to 131, macOS 27), while the solved pitch followed 1.17 and 1.05 in the same
-  frames. So lidtilt solves the pose itself.
+- Ready-made face pitch follows only part of the lid tilt. MediaPipe's own pitch followed
+  0.32 to 0.45 per lid degree over runs 1 to 3. In two further runs (lid 97 to 131,
+  macOS 27, `analysis/vision_slope.py`), Apple Vision's face pitch
+  (`VNDetectFaceRectanglesRequest`) followed 0.24 and 0.24, and the solved pitch 1.17 and
+  1.05, on the frames where both found a face; all moved the same way. That is why
+  lidtilt solves the pose itself; it is one person on one MacBook.
 - These are consistency checks, not accuracy: nothing was compared against a goniometer
   or an IMU. The recordings hold face landmarks, so they are not published.
 
@@ -156,7 +159,7 @@ latter into a GIF with `uv run python demo/make_gif.py head_marks.npz out.gif`.
 | `calibrate.py` | Webcam intrinsics |
 | `measure.py` | Optional: camera tilt vs lid angle from the board held still (`measure.py [seconds]`, default 40, writes `measure.csv`); it prints the `LIDTILT_SLOPE` value to use (default 1) |
 | `analysis/table.py` | Recomputes the table above; needs the recordings, which are not published |
-| `analysis/vision_slope.py` | Optional: Vision face pitch vs solved pitch against the lid (needs `pyobjc-framework-Vision`) |
+| `analysis/vision_slope.py` | Optional: Vision face pitch vs solved pitch against the lid; run `uv run --extra vision python analysis/vision_slope.py` from the repository root |
 | `head.py` | Head pitch, with and without the lid tilt |
 | `demo/make_gif.py` | Demo GIF from a recording |
 
