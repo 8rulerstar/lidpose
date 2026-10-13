@@ -1,6 +1,6 @@
 """How does the camera pitch follow the lid angle?
 
-The x-axis slope comes out negative (about -1); LIDPOSE_SLOPE takes its magnitude.
+The x-axis slope comes out negative (about -1); LIDTILT_SLOPE takes its magnitude.
 
 Prop the phone with board.png so it stays still in view, then slowly open and close
 the lid for the whole run. Each frame records the lid angle and the camera rotation
@@ -80,4 +80,4 @@ for i, axis in enumerate("xyz", start=1):
     resid = a[:, i] - (slope * lid_change + offset)
     print(f"rotation about camera {axis}: slope {slope:+.3f} deg per lid deg, residual SD {resid.std():.2f} deg")
 x_slope = np.polyfit(lid_change, a[:, 1], 1)[0]
-print(f"to use it: LIDPOSE_SLOPE={abs(x_slope):.2f}")
+print(f"to use it: LIDTILT_SLOPE={abs(x_slope):.2f}")

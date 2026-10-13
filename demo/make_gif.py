@@ -1,6 +1,6 @@
 """Render a demo GIF from a recorded run (no camera image: only the face landmarks).
 
-    uv run python demo/make_gif.py head_marks.npz demo/lidpose.gif --start 3 --end 23
+    uv run python demo/make_gif.py head_marks.npz demo/lidtilt.gif --start 3 --end 23
 
 head_marks.npz is what head.py saves when you quit it.
 """
@@ -128,7 +128,7 @@ def main():
     for now in np.arange(0, span, 1 / args.fps):
         i = max(np.searchsorted(t, now, side="right") - 1, 0)  # never wrap to the last frame
         img = np.full((H, W, 3), BG, np.uint8)
-        text(img, "Opening the lid tilts the webcam. lidpose subtracts the tilt.", (30, 40), 0.75, TEXT, 2)
+        text(img, "Opening the lid tilts the webcam. lidtilt subtracts the tilt.", (30, 40), 0.75, TEXT, 2)
         draw_face(img, marks[i], view, (30, 70, 384, 216))
         draw_laptop(img, lid[i], (520, 250))
         text(img, f"raw pitch    {camera[i]:+5.1f}", (720, 150), 0.65, RED, 2)

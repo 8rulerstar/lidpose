@@ -1,12 +1,12 @@
-# lidpose
+# lidtilt
 
 A MacBook's webcam sits in the lid, so opening or closing the lid tilts the camera,
-and a head pitch estimated from the webcam moves with it. lidpose reads the lid angle
+and a head pitch estimated from the webcam moves with it. lidtilt reads the lid angle
 sensor and subtracts that tilt, so the head pitch it reports mostly follows your head
 rather than the screen. It measures head pitch only, not neck posture, and relative to
 the posture you start in (+ = head down).
 
-![Head pitch from the webcam before and after removing the lid tilt](demo/lidpose.gif)
+![Head pitch from the webcam before and after removing the lid tilt](demo/lidtilt.gif)
 
 Red is the head pitch the webcam sees: it follows the lid. Green has the lid tilt
 removed. The nod near the end shows in both. Recorded in run 5, 3 to 23 s (the table uses
@@ -28,9 +28,9 @@ This is a prototype measured on one person and one MacBook. Read
 4. Opening the lid lowers the raw pitch by about one degree per lid degree, so the lid
    change since the start is added back, one degree per lid degree.
 
-Re-zeroing whenever the lid moves would also work if you remember to do it; lidpose does
+Re-zeroing whenever the lid moves would also work if you remember to do it; lidtilt does
 it continuously, including while the lid is moving. If you wear AirPods, their head
-motion sensors measure pitch against gravity and are likely better; lidpose needs no
+motion sensors measure pitch against gravity and are likely better; lidtilt needs no
 extra hardware.
 
 ## What was measured
@@ -52,7 +52,7 @@ from the recordings. Degrees.
   leaves up to about 4.5 degrees over a 50 degree lid change. After a large lid change,
   re-zero by restarting `head.py`.
 - MediaPipe's own head pitch followed only 0.32 to 0.45 per lid degree over runs 1 to 3,
-  so lidpose solves the pose itself.
+  so lidtilt solves the pose itself.
 - These are consistency checks, not accuracy: nothing was compared against a goniometer
   or an IMU. The recordings hold face landmarks, so they are not published.
 
@@ -81,7 +81,7 @@ uv run python lid.py            # prints the lid angle
 ```
 
 If an iPhone is nearby, Continuity Camera can take camera 0: turn it off on the iPhone
-(Settings > General > AirPlay & Continuity) or set `LIDPOSE_CAMERA=1`. Turn Center
+(Settings > General > AirPlay & Continuity) or set `LIDTILT_CAMERA=1`. Turn Center
 Stage off in Control Center > Video Effects while measuring.
 
 Calibrate the webcam once. Send `board.png` to a phone (AirDrop works), open it full
@@ -123,7 +123,7 @@ latter into a GIF with `uv run python demo/make_gif.py head_marks.npz out.gif`.
 - Moving closer to the camera raises the reading, so leaning toward the screen reads as
   head down: about +10 degrees at 0.65 of the starting distance in one run with the head
   still. A correction for it
-  (`LIDPOSE_DIST_GAIN=-27.5`) is off by default: it was fitted on that one run, it also
+  (`LIDTILT_DIST_GAIN=-27.5`) is off by default: it was fitted on that one run, it also
   shrinks a real lean toward the screen, and its size depends on where the face is in
   the frame.
 - Moving the lid also changes the distance to the camera, so a few degrees can remain
@@ -148,7 +148,7 @@ latter into a GIF with `uv run python demo/make_gif.py head_marks.npz out.gif`.
 | `lid.py` | Lid angle sensor |
 | `board.py`, `board.png` | ChArUco board, camera index setting |
 | `calibrate.py` | Webcam intrinsics |
-| `measure.py` | Optional: camera tilt vs lid angle from the board held still (`measure.py [seconds]`, default 40, writes `measure.csv`); it prints the `LIDPOSE_SLOPE` value to use (default 1) |
+| `measure.py` | Optional: camera tilt vs lid angle from the board held still (`measure.py [seconds]`, default 40, writes `measure.csv`); it prints the `LIDTILT_SLOPE` value to use (default 1) |
 | `analysis/table.py` | Recomputes the table above; needs the recordings, which are not published |
 | `head.py` | Head pitch, with and without the lid tilt |
 | `demo/make_gif.py` | Demo GIF from a recording |

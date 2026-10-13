@@ -35,15 +35,15 @@ def _env_float(name, default):
     return value
 
 
-SLOPE = _env_float("LIDPOSE_SLOPE", 1.0)  # camera pitch degrees per lid degree
+SLOPE = _env_float("LIDTILT_SLOPE", 1.0)  # camera pitch degrees per lid degree
 if SLOPE <= 0:
-    raise SystemExit("LIDPOSE_SLOPE takes the size of measure.py's slope, a positive number such as 0.99")
+    raise SystemExit("LIDTILT_SLOPE takes the size of measure.py's slope, a positive number such as 0.99")
 # Experimental, off by default. The pitch reads too high as the face nears the camera:
 # +10 degrees at 0.65 of the starting distance with the head still and the laptop pulled
 # closer (one run, one person), fitted there as -27.5 * log(distance ratio). It also
 # shrinks a real lean toward the screen, and its size depends on where the face sits in
-# the frame, so it is not a constant to trust yet. Try LIDPOSE_DIST_GAIN=-27.5.
-DIST_GAIN = _env_float("LIDPOSE_DIST_GAIN", 0.0)
+# the frame, so it is not a constant to trust yet. Try LIDTILT_DIST_GAIN=-27.5.
+DIST_GAIN = _env_float("LIDTILT_DIST_GAIN", 0.0)
 
 
 def landmarker():
@@ -169,7 +169,7 @@ if __name__ == "__main__":
                 if lid_misses > 300:
                     sys.exit(f"lid sensor unreadable for 300 frames: {e}")
                 cv2.putText(frame, "lid sensor unreadable", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 0, 255), 3)
-                cv2.imshow("lidpose", frame)
+                cv2.imshow("lidtilt", frame)
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
                 continue
@@ -196,7 +196,7 @@ if __name__ == "__main__":
                     ]
             for i, text in enumerate(lines):
                 cv2.putText(frame, text, (20, 50 + 45 * i), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 255, 0), 3)
-            cv2.imshow("lidpose", frame)
+            cv2.imshow("lidtilt", frame)
             if cv2.waitKey(1) & 0xFF == ord("q"):
                 break
     finally:  # keep the recording however the loop ends (q, Ctrl+C, an error)

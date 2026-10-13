@@ -9,7 +9,7 @@ Segments are fixed here so the numbers can be reproduced:
     uv run python analysis/table.py
 
 It needs the recordings, which are not published (they hold face landmarks), so only
-the author can run it. It uses a lid slope of 1 whatever LIDPOSE_SLOPE says.
+the author can run it. It uses a lid slope of 1 whatever LIDTILT_SLOPE says.
 """
 
 import sys

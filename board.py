@@ -6,14 +6,14 @@ import os
 import cv2
 
 try:  # built-in camera index; an iPhone (Continuity Camera) may take 0
-    CAMERA = int(os.environ.get("LIDPOSE_CAMERA", 0))
+    CAMERA = int(os.environ.get("LIDTILT_CAMERA", 0))
     if CAMERA < 0:
         raise ValueError
 except ValueError:
-    raise SystemExit("LIDPOSE_CAMERA must be a camera index such as 0 or 1") from None
+    raise SystemExit("LIDTILT_CAMERA must be a camera index such as 0 or 1") from None
 CAMERA_HELP = (
     "allow the camera for Terminal in System Settings > Privacy & Security > Camera, quit and reopen "
-    "Terminal, and run again; if an iPhone took camera 0 (Continuity Camera), set LIDPOSE_CAMERA=1"
+    "Terminal, and run again; if an iPhone took camera 0 (Continuity Camera), set LIDTILT_CAMERA=1"
 )
 
 DICT = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
